@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "984673992273",
+    "firebase_url": "https://student-evaluation-system.firebaseio.com",
+    "project_id": "student-evaluation-system",
+    "storage_bucket": "student-evaluation-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984673992273:android:0949291227a2354c",
+        "android_client_info": {
+          "package_name": "iqra.shabeer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984673992273-aqm537dsrkamjbk560aa81ke4me5g342.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPyY5zVaQxaJ8_-SHyyP3mhUjTv_VyfZI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
