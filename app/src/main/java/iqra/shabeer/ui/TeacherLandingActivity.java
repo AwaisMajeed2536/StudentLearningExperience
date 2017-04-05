@@ -84,7 +84,7 @@ public class TeacherLandingActivity extends AppCompatActivity implements View.On
                 startActivity(intent);
                 break;
             case R.id.view_analysis_report_button:
-                //todo find mean, median and standard deviation etc
+                startActivity(new Intent(TeacherLandingActivity.this, ViewAnalysisActivity.class));
                 break;
             case R.id.view_graph_button:
                 //todo generate graph

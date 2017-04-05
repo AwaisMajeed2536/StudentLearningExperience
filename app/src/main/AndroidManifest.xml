@@ -21,6 +21,7 @@
         <activity android:name=".ui.TeacherLandingActivity"/>
         <activity android:name=".ui.GenerateSurveyActivity"/>
         <activity android:name=".ui.AddQuestionActivity"/>
+        <activity android:name=".ui.ViewAnalysisActivity"/>
 
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
