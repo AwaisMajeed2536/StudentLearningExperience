@@ -10,18 +10,21 @@
         android:theme="@style/AppTheme"
         android:name=".utilities.FirebasemContext">
         <activity android:name=".ui.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.StudentLandingActivity"/>
         <activity android:name=".ui.StudentEvalutionActivity"/>
         <activity android:name=".ui.TeacherLandingActivity"/>
         <activity android:name=".ui.GenerateSurveyActivity"/>
         <activity android:name=".ui.AddQuestionActivity"/>
-        <activity android:name=".ui.ViewAnalysisActivity"/>
+        <activity android:name=".ui.ViewAnalysisActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
 
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->

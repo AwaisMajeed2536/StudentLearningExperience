@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_weight="80"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Student Learning Experience (SLE)- Detail Report"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/creation_detail_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Produced on 11 Apr 2017 By Iqra Shabir(01071511001). SurveyId 12493656"
+                android:textSize="8dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:src="@drawable/qau_logo" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/display_institute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Institute :        "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/institute_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/display_institute"
+            android:text="Quaid-e-Azam University"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/display_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_toRightOf="@+id/institute_name_textview"
+            android:text="Course : "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/course_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/display_course"
+            android:text="DBD"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/display_credit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_toRightOf="@+id/course_name_textview"
+            android:text="Credit Hours : "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/credit_hour_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/display_credit"
+            android:text="3"
+            android:textSize="10dp" />
+
+        <View
+            android:id="@+id/first_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/display_department"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/first_divider"
+            android:text="Department : "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/department_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/first_divider"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/display_department"
+            android:text="Computer Science"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/display_semester"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/first_divider"
+            android:layout_marginLeft="14dp"
+            android:layout_toRightOf="@+id/institute_name_textview"
+            android:text="Semester : "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/semester_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/first_divider"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/display_semester"
+            android:text="5"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/display_program"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/first_divider"
+            android:layout_marginLeft="14dp"
+            android:layout_toRightOf="@+id/course_name_textview"
+            android:text="Program : "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/program_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/first_divider"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/display_program"
+            android:text="MSc"
+            android:textSize="10dp" />
+
+        <View
+            android:id="@+id/second_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/program_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/display_instructor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/second_divider"
+            android:text="Instructor :     "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/instructor_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/second_divider"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/display_instructor"
+            android:text="Muhammad Usman"
+            android:textSize="10dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="Quantitative Summary"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="8"
+            android:text=" Q# " />
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="32"
+            android:text=" Question " />
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="5"
+            android:text=" # " />
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="5"
+            android:text="  " />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="20"
+            android:text=" Score      " />
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="11"
+            android:text="Mean" />
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="9"
+            android:text="Med" />
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_margin="1dp"
+            android:layout_weight="10"
+            android:text="S.Dev" />
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/credit_hour_textview"
+            android:background="?android:attr/listDivider" />
+    </LinearLayout>
+
+</LinearLayout>
