@@ -8,7 +8,6 @@ public class QuantitativeAnalysisModel {
     private String questionNumber;
     private String question;
     private int [] scoreCount;
-    private int [] score;
     private double mean;
     private double median;
     private double stdDev;
@@ -20,7 +19,6 @@ public class QuantitativeAnalysisModel {
         this.questionNumber = questionNumber;
         this.question = question;
         this.scoreCount = scoreCount;
-        this.score = score;
         this.mean = mean;
         this.median = median;
         this.stdDev = stdDev;
@@ -48,14 +46,6 @@ public class QuantitativeAnalysisModel {
 
     public void setScoreCount(int[] scoreCount) {
         this.scoreCount = scoreCount;
-    }
-
-    public int[] getScore() {
-        return score;
-    }
-
-    public void setScore(int[] score) {
-        this.score = score;
     }
 
     public double getMean() {

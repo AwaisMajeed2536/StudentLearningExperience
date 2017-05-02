@@ -1,5 +1,6 @@
 package iqra.shabeer.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -57,7 +58,7 @@ public class AddQuestionActivity extends AppCompatActivity implements View.OnCli
             else{
                 Toast.makeText(this, "Failed to add question!", Toast.LENGTH_SHORT).show();
             }
-            finish();
+            startActivity(new Intent(this, GenerateSurveyActivity.class));
         }
     }
 

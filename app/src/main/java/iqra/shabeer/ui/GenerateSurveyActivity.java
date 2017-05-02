@@ -115,13 +115,14 @@ public class GenerateSurveyActivity extends AppCompatActivity {
                 String selectedCourse = getIntent().getStringExtra("selectedCourse");
                 for(int i=0; i<surveyQuestionLL.getChildCount(); i++){
                     CheckBox cb = (CheckBox)surveyQuestionLL.findViewById(0+i);
+                    if(cb == null)
+                        continue;
                     if (cb.isChecked())
                         selectedQuestionList.add(cb.getText().toString());
                 }
                 EvaluationDataBO obj = new EvaluationDataBO("s5d4f","sdfs",selectedQuestionList);
                 DatabaseReference tempRef= mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations");
                 tempRef.child(selectedCourse.toLowerCase()).setValue(obj);
-                int a = 4;
             }
         });
     }

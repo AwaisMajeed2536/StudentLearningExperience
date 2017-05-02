@@ -3,7 +3,6 @@ package iqra.shabeer.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,11 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import iqra.shabeer.R;
+import iqra.shabeer.fragment.ScoreGraphFragment;
 import iqra.shabeer.models.TeacherAccountBO;
 
 /**
@@ -87,7 +86,7 @@ public class TeacherLandingActivity extends AppCompatActivity implements View.On
                 startActivity(new Intent(TeacherLandingActivity.this, ViewAnalysisActivity.class));
                 break;
             case R.id.view_graph_button:
-                //todo generate graph
+                startActivity(new Intent(TeacherLandingActivity.this, ViewGraphActivity.class));
 
         }
     }

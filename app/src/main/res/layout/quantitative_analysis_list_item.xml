@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="32"
+        android:layout_weight="30"
         android:background="#ffffff"
         android:text=" Question " />
 
@@ -54,7 +54,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="5"
+        android:layout_weight="7"
         android:background="#ffffff"
         android:text="SA A N DA SD" />
 
@@ -63,14 +63,58 @@
         android:layout_height="match_parent"
         android:background="?android:attr/listDivider" />
 
-    <TextView
-        android:id="@+id/score_textview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/score_progress_wrapper"
         android:layout_margin="1dp"
+        android:layout_width="0dp"
         android:layout_weight="20"
-        android:background="#ffffff"
-        android:text=" Score      " />
+        android:weightSum="5"
+        android:layout_height="wrap_content">
+
+
+        <ProgressBar
+            android:id="@+id/sa_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:progress="30"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ProgressBar
+            android:id="@+id/a_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:progress="30"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ProgressBar
+            android:id="@+id/n_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:progress="30"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ProgressBar
+            android:id="@+id/da_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:progress="30"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ProgressBar
+            android:id="@+id/sd_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:progress="30"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+
+    </LinearLayout>
 
 
     <View
