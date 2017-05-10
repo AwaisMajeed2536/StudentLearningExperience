@@ -9,7 +9,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -30,10 +34,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import iqra.shabeer.R;
@@ -48,7 +55,7 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
  */
 
 public class QuantitativeAnalysisFragment extends Fragment {
-
+    private static final String TAG = "qaf";
     private LinearLayout rootView;
     private ListView analysisTableListview;
     private QuantitativeAnalysisAdapter adapter;
@@ -58,6 +65,14 @@ public class QuantitativeAnalysisFragment extends Fragment {
 
     private DatabaseReference scoreRef;
     private DatabaseReference questionRef;
+
+    private Bitmap pdfImage;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -86,6 +101,8 @@ public class QuantitativeAnalysisFragment extends Fragment {
                         dataList = convertList();
                         adapter = new QuantitativeAnalysisAdapter(getActivity(), dataList);
                         analysisTableListview.setAdapter(adapter);
+                        pdfImage = getWholeListViewItemsToBitmap();
+                        storeImage(pdfImage);
                     }
 
                     @Override
@@ -101,6 +118,38 @@ public class QuantitativeAnalysisFragment extends Fragment {
             }
         });
 
+    }
+
+    private void createPDF() {
+        String state = Environment.getExternalStorageState();
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            Toast.makeText(getActivity(), "Permission not Granted", Toast.LENGTH_SHORT).show();
+        }
+
+//Create a directory for your PDF
+        File pdfDir = new File(Environment.getExternalStorageDirectory(), "MyApp");
+        if (!pdfDir.exists()){
+            pdfDir.mkdir();
+        }
+
+        File pdfFile = new File(pdfDir, "myPdfFile.pdf");
+
+        try {
+            Document  document = new Document();
+
+            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+            document.open();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            pdfImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            addImage(document,byteArray);
+            document.close();
+            Toast.makeText(getActivity(), "PDF Created!", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e){
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
     private List<QuantitativeAnalysisModel> convertList() {
@@ -122,8 +171,6 @@ public class QuantitativeAnalysisFragment extends Fragment {
         }
         return returnList;
     }
-
-
 
     private void initView(View view) {
         rootView = (LinearLayout) view.findViewById(R.id.root_view);
@@ -150,43 +197,72 @@ public class QuantitativeAnalysisFragment extends Fragment {
         }
     }
 
+//    private void createPDF(Bitmap bmp) {
+//        //First Check if the external storage is writable
+//        String state = Environment.getExternalStorageState();
+//        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+//            Toast.makeText(getActivity(), "External storage is not writeAble!", Toast.LENGTH_LONG).show();
+//        }
+//
+//        //Create a directory for your PDF
+//        pdfDir = new File(Environment.getExternalStorageDirectory().toURI() + "SLE");
+//        if (!pdfDir.exists()) {
+//            fileCreated = pdfDir.mkdir();
+//        }
+//
+//        File pdfFile = new File(Environment.getExternalStorageDirectory().toString() + "/myPDFnew.pdf");
+//        if (fileCreated)
+//            pdfFile = new File(pdfDir, "thePdfFile.pdf");
+//        else
+//            Toast.makeText(getActivity(), "Directory wasn't created!", Toast.LENGTH_LONG).show();
+//
+//        try {
+//            Document document = new Document();
+//
+//            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+//            document.open();
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//            byte[] byteArray = stream.toByteArray();
+//            addImage(document, byteArray);
+//            document.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    int allitemsheight = 0;
-    Bitmap bigbitmap;
-    Canvas bigcanvas;
-    List<Bitmap> bmps = new ArrayList<Bitmap>();
-    Bitmap screen = null;
-    File pdfDir;
-    boolean fileCreated = false;
-
-    private void createPDF() {
-        //First Check if the external storage is writable
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            Toast.makeText(getActivity(), "External storage is not writeAble!", Toast.LENGTH_LONG).show();
+    private void addImage(Document document, byte[] byteArray) {
+        Image image = null;
+        try {
+            image = Image.getInstance(byteArray);
+        } catch (BadElementException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } catch (IOException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-
-        //Create a directory for your PDF
-        pdfDir = new File(Environment.getExternalStorageDirectory().toURI() + "SLE");
-        if (!pdfDir.exists()) {
-            fileCreated = pdfDir.mkdir();
+        // image.scaleAbsolute(150f, 150f);
+        try {
+            document.add(image);
+            Toast.makeText(getActivity(), "Image added to document", Toast.LENGTH_SHORT).show();
+        } catch (DocumentException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
-        //root = (LinearLayout) inflater.inflate(R.layout.activity_view_analysis, null);
-        //root.setDrawingCacheEnabled(true);
-        View v = getActivity().getWindow().findViewById(R.id.quantitative_analysis_table_listview).getRootView();
-        //v.setDrawingCacheEnabled(true);
-        //v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-        //View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        //v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
-
-        //v.buildDrawingCache(true);
+    }
 
 
-        final ListView listview = (ListView) getActivity().getWindow().findViewById(R.id.quantitative_analysis_table_listview);
+    public Bitmap getWholeListViewItemsToBitmap() {
+
+        ListView listview = analysisTableListview;
         ListAdapter adapter = listview.getAdapter();
         int itemscount = adapter.getCount();
+        int allitemsheight = 0;
+        List<Bitmap> bmps = new ArrayList<Bitmap>();
 
         for (int i = 0; i < itemscount; i++) {
 
@@ -196,109 +272,83 @@ public class QuantitativeAnalysisFragment extends Fragment {
 
             childView.layout(0, 0, childView.getMeasuredWidth(), childView.getMeasuredHeight());
             childView.setDrawingCacheEnabled(true);
-            childView.buildDrawingCache(true);
+            childView.buildDrawingCache();
             bmps.add(childView.getDrawingCache());
             allitemsheight += childView.getMeasuredHeight();
         }
 
+        Bitmap bigbitmap = Bitmap.createBitmap(listview.getMeasuredWidth(), allitemsheight, Bitmap.Config.ARGB_8888);
+        Canvas bigcanvas = new Canvas(bigbitmap);
 
-        listview.post(new Runnable() {
-            @Override
-            public void run() {
-                bigbitmap = Bitmap.createBitmap(listview.getMeasuredWidth(), allitemsheight, Bitmap.Config.ARGB_8888);
-                bigcanvas = new Canvas(bigbitmap);
-                Paint paint = new Paint();
-                int iHeight = 0;
+        Paint paint = new Paint();
+        int iHeight = 0;
 
-                for (int i = 0; i < bmps.size(); i++) {
-                    Bitmap bmp = bmps.get(i);
-                    bigcanvas.drawBitmap(bmp, 0, iHeight, paint);
-                    iHeight += bmp.getHeight();
+        for (int i = 0; i < bmps.size(); i++) {
+            Bitmap bmp = bmps.get(i);
+            bigcanvas.drawBitmap(bmp, 0, iHeight, paint);
+            iHeight += bmp.getHeight();
 
-                    bmp.recycle();
-                    bmp = null;
-                }
-                screen = bigbitmap;
-                File pdfFile = new File(Environment.getExternalStorageDirectory().toString() + "/myPDFnew.pdf");
-                if (fileCreated)
-                    pdfFile = new File(pdfDir, "thePdfFile.pdf");
-                else
-                    Toast.makeText(getActivity(), "Directory wasn't created!", Toast.LENGTH_LONG).show();
-
-                try {
-                    Document document = new Document();
-
-                    PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
-                    document.open();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    screen.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    addImage(document, byteArray);
-                    document.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+            bmp.recycle();
+            bmp = null;
+        }
 
 
-        //Bitmap screen;
-//        View v1 = rootView.getRootView();
-//        v1.setDrawingCacheEnabled(true);
-//        v1.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-//        v1.layout(0, 0, v1.getMeasuredWidth(), v1.getMeasuredHeight());
-//
-//        v1.buildDrawingCache(true);
-//        //screen = Bitmap.createBitmap(v1.getDrawingCache());
-//        v1.setDrawingCacheEnabled(false);
-
+        return bigbitmap;
     }
 
-    private static void addImage(Document document, byte[] byteArray) {
-        Image image = null;
+    private void storeImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d(TAG,
+                    "Error creating media file, check storage permissions: ");// e.getMessage());
+            return;
+        }
         try {
-            image = Image.getInstance(byteArray);
-        } catch (BadElementException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+            Toast.makeText(getActivity(), "Image saved...", Toast.LENGTH_SHORT).show();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // image.scaleAbsolute(150f, 150f);
-        try {
-            document.add(image);
-        } catch (DocumentException e) {
-            e.printStackTrace();
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
         }
     }
 
-    public static Bitmap getBitmapFromView(View view) {
-        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(returnedBitmap);
-        Drawable bgDrawable = view.getBackground();
-        if (bgDrawable != null) {
-            bgDrawable.draw(canvas);
-        } else {
-            canvas.drawColor(Color.WHITE);
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getActivity().getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
         }
-        view.draw(canvas);
-        return returnedBitmap;
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
     }
 
-    public Bitmap getBitmapFromViewNew(View pView) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.create_analysis_pdf_menu, menu);
+    }
 
-        pView.setDrawingCacheEnabled(true);
-        pView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-
-        pView.layout(0, 0, pView.getWidth(), pView.getHeight());
-        pView.buildDrawingCache(true);
-
-        Bitmap bitmap = Bitmap.createScaledBitmap(pView.getDrawingCache(), pView.getWidth(), pView.getHeight(), false);
-        pView.setDrawingCacheEnabled(false);
-
-        return bitmap;
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        createPDF();
+        return super.onOptionsItemSelected(item);
     }
 }
