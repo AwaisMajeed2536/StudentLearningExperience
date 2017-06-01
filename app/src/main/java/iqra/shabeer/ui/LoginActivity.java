@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -118,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String temp = null;
                     if (teacherData != null)
                         temp = teacherData.getPassword().toString();
-                    if (temp.equals(pswrd)){
+                    if (!TextUtils.isEmpty(temp) && temp.equals(pswrd)){
                         Intent intent = new Intent(mContext, TeacherLandingActivity.class);
                         intent.putExtra("teacherData",teacherData);
                         startActivity(intent);

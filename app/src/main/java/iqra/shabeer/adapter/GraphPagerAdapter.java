@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import iqra.shabeer.fragment.CandleStickChartFragment;
 import iqra.shabeer.fragment.MMSGraphFragment;
 import iqra.shabeer.fragment.QualitativeAnalysisFragment;
 import iqra.shabeer.fragment.QuantitativeAnalysisFragment;
@@ -27,7 +28,7 @@ public class GraphPagerAdapter extends FragmentPagerAdapter{
     @Override
     public Fragment getItem(int position) {
         if(position == 0)
-            return new ScoreGraphFragment();
+            return new CandleStickChartFragment();
         return new MMSGraphFragment();
     }
 
