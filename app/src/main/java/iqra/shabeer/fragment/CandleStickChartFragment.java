@@ -12,15 +12,25 @@ import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import iqra.shabeer.R;
+import iqra.shabeer.helper.UtilHelper;
 
 public class CandleStickChartFragment extends Fragment {
 
 
     CandleStickChart candleStickChart;
+    private DatabaseReference scoreRef;
+    private ArrayList<ArrayList<Long>> scoreDataList;
 
     @Nullable
     @Override
@@ -38,32 +48,32 @@ public class CandleStickChartFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        scoreRef = FirebaseDatabase.getInstance().getReferenceFromUrl(
+                "https://student-evaluation-system.firebaseio.com/root/analysisData/quantitative/" + "dbd");
 
-        ArrayList<CandleEntry> entries = new ArrayList<>();
+        scoreRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                scoreDataList = (ArrayList<ArrayList<Long>>) dataSnapshot.getValue();
+                ArrayList<CandleEntry> entries = new ArrayList<>();
+                for (ArrayList<Long> singleQuestionScore : scoreDataList) {
+                    Long[] array = new Long[singleQuestionScore.size()];
+                    entries.add(new CandleEntry(Collections.min(singleQuestionScore),
+                            Collections.max(singleQuestionScore), UtilHelper.findMedian(singleQuestionScore.toArray(array)),
+                            UtilHelper.findQ1(singleQuestionScore.toArray(array)), UtilHelper.findQ3(singleQuestionScore.toArray(array))));
+                }
+                CandleDataSet dataSet = new CandleDataSet(entries, "Students");
+                dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+                CandleData data = new CandleData(dataSet);
+                candleStickChart.setData(data);
+                candleStickChart.animateY(5000);
+                candleStickChart.invalidate();
+            }
 
-        entries.add(new CandleEntry(0, 4.62f, 2.02f, 2.70f, 4.13f));
-        entries.add(new CandleEntry(1, 5.50f, 2.70f, 3.35f, 4.96f));
-        entries.add(new CandleEntry(2, 5.25f, 3.02f, 3.50f, 4.50f));
-        entries.add(new CandleEntry(3, 6f, 3.25f, 4.40f, 5.0f));
-        entries.add(new CandleEntry(4, 7f, 0f, 4.2f, 5.3f));
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        //how to add data.......
-        //entries.add(new CandleEntry(indexNo , max value in each ques, min value in each ques, Q1, Q3);
-        CandleDataSet dataset = new CandleDataSet(entries, "# of Calls");//ye na aaye...
-
-        ArrayList<String> labels = new ArrayList<String>();
-        labels.add("Question 1");
-        labels.add("Question 2");
-        labels.add("Question 3");
-        labels.add("Question 4");
-        labels.add("Question 5");
-
-
-        CandleData data = new CandleData(dataset);
-        candleStickChart.setData(data);
-
-        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
-        //candleStickChart.setDescription("Candle Stick");
-        candleStickChart.animateY(5000);
+            }
+        });
     }
 }

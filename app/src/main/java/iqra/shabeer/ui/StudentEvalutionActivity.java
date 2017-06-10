@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,11 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import iqra.shabeer.R;
-import iqra.shabeer.models.EvaluationDataBO;
 
 /**
  * Created by Awais on 2/21/2017.
@@ -33,14 +32,18 @@ import iqra.shabeer.models.EvaluationDataBO;
 
 public class StudentEvalutionActivity extends AppCompatActivity {
     FirebaseDatabase mDatabase;
-    DatabaseReference getQuestionRef;
-    DatabaseReference submitReportRef;
+    DatabaseReference getQuantitativeQueRef;
+    DatabaseReference submitQauntReportRef;
     LinearLayout parentLinearLayout;
     private Context mContext;
-    private int numberOfQuestions;
+    private int numberOfQuantitativeQuestions;
     private String[] selectedOptionsArray;
     private String subjectName;
     private ArrayList<long[]> previousValues;
+    private DatabaseReference getQualitativeQueRef;
+    private int numberOfQualitativeQuestions;
+    private DatabaseReference submitQaultReportRef;
+    private long qualtChildCount;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,22 +52,26 @@ public class StudentEvalutionActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance();
         parentLinearLayout = (LinearLayout) findViewById(R.id.parent_ll);
         mContext = StudentEvalutionActivity.this;
-
         Bundle bundle = getIntent().getExtras();
         if (bundle != null)
             subjectName = bundle.getString("subjectName").trim();
-        getQuestionRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations/"
-                + subjectName);
-        submitReportRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/"
-                + subjectName);
-        getQuestionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        countQualtChildren();
+        getQuantitativeQueRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations/"
+                + subjectName + "/quantitative/");
+        getQualitativeQueRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations/"
+                + subjectName + "/qualitative/");
+        addQuantitativeQuestionsToView();
+
+    }
+
+    private void addQuantitativeQuestionsToView(){
+        getQuantitativeQueRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                EvaluationDataBO obj = dataSnapshot.getValue(EvaluationDataBO.class);
-                List<String> listOfQuestion = obj.getQuestions();
-                numberOfQuestions = listOfQuestion.size();
-                selectedOptionsArray = new String[numberOfQuestions];
-                for (int i = 0; i < numberOfQuestions; i++) {
+                List<String> listOfQuestion = (List<String>) dataSnapshot.getValue();
+                numberOfQuantitativeQuestions = listOfQuestion.size();
+                selectedOptionsArray = new String[numberOfQuantitativeQuestions];
+                for (int i = 0; i < numberOfQuantitativeQuestions; i++) {
                     LinearLayout ll = new LinearLayout(mContext);
                     LinearLayout ll1 = new LinearLayout(mContext);
                     final RadioGroup rg = new RadioGroup(mContext);
@@ -101,48 +108,100 @@ public class StudentEvalutionActivity extends AppCompatActivity {
                     ll.addView(ll1);
                     parentLinearLayout.addView(ll);
                 }
-                Button submitButton = new Button(mContext);
-                submitButton.setText("submit");
-                submitButton.setId(825 + 1);
-                parentLinearLayout.addView(submitButton);
-                submitButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        for (int i = 0; i < numberOfQuestions; i++) {
-                            RadioGroup rg = (RadioGroup) parentLinearLayout.findViewById(i + 18946);
-                            int selectedOption = rg.getCheckedRadioButtonId();
-                            RadioButton rb = (RadioButton) rg.findViewById(selectedOption);
-                            selectedOptionsArray[i] = rb.getText().toString();
-                        }
-                        submitReportRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                    ArrayList<ArrayList<Long>> subjectReport = (ArrayList<ArrayList<Long>>)
-                                            dataSnapshot.getValue();
-                                    previousValues = new ArrayList<long[]>();
-                                    for (int i = 0; i < subjectReport.size(); i++) {
-                                        ArrayList<Long> questionReport = subjectReport.get(i);
-                                        long[] counts = new long[5];
-                                        for (int j = 0; j < questionReport.size(); j++) {
-                                            counts[j] = questionReport.get(j);
-                                        }
-                                        previousValues.add(counts);
-                                    }
-                                    submitReport(selectedOptionsArray, previousValues);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                });
-
+                addQualitativeQuestionsToView();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addQualitativeQuestionsToView(){
+        getQualitativeQueRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null){
+                    return;
+                }
+                List<String> queList = (List<String>) dataSnapshot.getValue();
+                numberOfQualitativeQuestions = queList.size();
+                for(int i=0; i< queList.size(); i++){
+                    LinearLayout linearLayout = new LinearLayout(mContext);
+
+                    linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    TextView textView = new TextView(mContext);
+                    textView.setText(queList.get(i));
+                    textView.setTextSize(18);
+                    linearLayout.addView(textView);
+                    EditText editText = new EditText(mContext);
+                    editText.setId(2912 + i);
+                    editText.setTextSize(18);
+                    linearLayout.addView(editText);
+                    parentLinearLayout.addView(linearLayout);
+                }
+                addSubmitButtonToView();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addSubmitButtonToView(){
+        Button submitButton = new Button(mContext);
+        submitButton.setText("submit");
+        submitButton.setId(825 + 1);
+        parentLinearLayout.addView(submitButton);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < numberOfQuantitativeQuestions; i++) {
+                    RadioGroup rg = (RadioGroup) parentLinearLayout.findViewById(i + 18946);
+                    int selectedOption = rg.getCheckedRadioButtonId();
+                    RadioButton rb = (RadioButton) rg.findViewById(selectedOption);
+                    selectedOptionsArray[i] = rb.getText().toString();
+                }
+                submitQauntReportRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/quantitative/"
+                        + subjectName);
+                submitQauntReportRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ArrayList<ArrayList<Long>> subjectReport = (ArrayList<ArrayList<Long>>)
+                                dataSnapshot.getValue();
+                        if (subjectReport.isEmpty())
+                            return;
+                        previousValues = new ArrayList<long[]>();
+                        for (int i = 0; i < subjectReport.size(); i++) {
+                            ArrayList<Long> questionReport = subjectReport.get(i);
+                            long[] counts = new long[5];
+                            for (int j = 0; j < questionReport.size(); j++) {
+                                counts[j] = questionReport.get(j);
+                            }
+                            previousValues.add(counts);
+                        }
+                        submitReport(selectedOptionsArray, previousValues);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                submitQaultReportRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/qualitative/"
+                        + subjectName);
+
+                List<String> ansList = new ArrayList<String>();
+                for(int i=0; i<numberOfQualitativeQuestions; i++){
+                    submitQaultReportRef.child(String.valueOf(i)).child(String.valueOf(qualtChildCount))
+                            .setValue(((EditText)parentLinearLayout.findViewById(2912+i)).getText().toString());
+                }
 
             }
         });
@@ -155,7 +214,7 @@ public class StudentEvalutionActivity extends AppCompatActivity {
             for (int j = 0; j < 5; j++) {
                 if (ans[j] == 0)
                     continue;
-                submitReportRef.child(String.valueOf(i)).child(String.valueOf(j)).setValue(ans[j]);
+                submitQauntReportRef.child(String.valueOf(i)).child(String.valueOf(j)).setValue(ans[j]);
             }
         }
         finish();
@@ -175,5 +234,21 @@ public class StudentEvalutionActivity extends AppCompatActivity {
             output.add(newCounts);
         }
         return output;
+    }
+
+    private void countQualtChildren(){
+        DatabaseReference tempRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/qualitative/"
+                + subjectName + "/0");
+        tempRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                qualtChildCount = dataSnapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

@@ -78,7 +78,7 @@ public class QuantitativeAnalysisAdapter extends BaseAdapter {
 
         scoreCount.setText(getScoreCount(scoreCnt));
         mean.setText(String.format("%.2f",obj.getMean()));
-        median.setText(String.valueOf(obj.getMedian()));
+        median.setText(String.format("%.2f",obj.getMedian()));
         stdDev.setText(String.format("%.2f",obj.getStdDev()));
         return view;
     }

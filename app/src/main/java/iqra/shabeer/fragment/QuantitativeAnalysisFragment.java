@@ -71,6 +71,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UtilHelper.showWaitDialog(getActivity(), "Creating Report", "please wait...");
         setHasOptionsMenu(true);
     }
 
@@ -101,6 +102,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
                         dataList = convertList();
                         adapter = new QuantitativeAnalysisAdapter(getActivity(), dataList);
                         analysisTableListview.setAdapter(adapter);
+                        UtilHelper.dismissWaitDialog();
                         pdfImage = getWholeListViewItemsToBitmap();
                         storeImage(pdfImage);
                     }
@@ -157,6 +159,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
         QuantitativeAnalysisModel model;
         for (int i = 0; i < scoreDataList.size(); i++) {
             ArrayList<Long> scores = scoreDataList.get(i);
+            Long[] convertArray = new Long[scores.size()];
             model = new QuantitativeAnalysisModel();
             model.setQuestionNumber((i + 1) + "");
             model.setQuestion(questionsList.get(i));
@@ -164,7 +167,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
                     scores.get(3).intValue(), scores.get(4).intValue()});
             double mean = UtilHelper.findMean(scores);
             model.setMean(mean);
-            model.setMedian(5.3);
+            model.setMedian(UtilHelper.findMedian(scores.toArray(convertArray)));
             model.setStdDev(UtilHelper.findStdDev(mean, scores));
             returnList.add(model);
 

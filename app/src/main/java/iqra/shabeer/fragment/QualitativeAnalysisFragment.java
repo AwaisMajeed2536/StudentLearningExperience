@@ -17,6 +17,7 @@ import java.util.List;
 
 import iqra.shabeer.R;
 import iqra.shabeer.adapter.QualitativeAnalysisAdapter;
+import iqra.shabeer.helper.UtilHelper;
 import iqra.shabeer.models.QualitativeAnalysisModel;
 
 /**
@@ -34,6 +35,7 @@ public class QualitativeAnalysisFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_qualitative_analysis, container, false);
         storeTempData();
+        UtilHelper.showWaitDialog(getActivity(), "Creating Report", "please wait...");
         qualitativeListView = (ListView) rootView.findViewById(R.id.qualitative_analysis_table_listview);
         return rootView;
     }
@@ -48,6 +50,7 @@ public class QualitativeAnalysisFragment extends Fragment {
         qualitativeListView.addHeaderView(header);
         adapter = new QualitativeAnalysisAdapter(getActivity(), dataList);
         qualitativeListView.setAdapter(adapter);
+        UtilHelper.dismissWaitDialog();
     }
 
     private void storeTempData(){

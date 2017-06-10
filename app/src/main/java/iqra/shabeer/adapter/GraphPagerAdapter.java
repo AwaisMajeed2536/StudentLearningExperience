@@ -15,9 +15,9 @@ import iqra.shabeer.fragment.ScoreGraphFragment;
  * Created by Devprovider on 20/04/2017.
  */
 
-public class GraphPagerAdapter extends FragmentPagerAdapter{
+public class GraphPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int TOTAL_PAGES = 2;
+    private static final int TOTAL_PAGES = 3;
     private Context context;
 
     public GraphPagerAdapter(FragmentManager fm, Context context) {
@@ -27,9 +27,12 @@ public class GraphPagerAdapter extends FragmentPagerAdapter{
 
     @Override
     public Fragment getItem(int position) {
-        if(position == 0)
+        if (position == 0)
+            return new ScoreGraphFragment();
+        else if (position == 1)
+            return new MMSGraphFragment();
+        else
             return new CandleStickChartFragment();
-        return new MMSGraphFragment();
     }
 
     @Override

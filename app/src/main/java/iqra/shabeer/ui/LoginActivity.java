@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,7 +23,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.bouncycastle.jce.provider.BrokenPBE;
+
 import iqra.shabeer.R;
+import iqra.shabeer.helper.UtilHelper;
 import iqra.shabeer.models.StudentAccountBO;
 import iqra.shabeer.models.TeacherAccountBO;
 
@@ -42,6 +46,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         initialize();
+        String userType = UtilHelper.getLoggedInUserType(this);
+        if(!TextUtils.isEmpty(userType) && userType.equalsIgnoreCase("student")){
+            Intent intent = new Intent(mContext, StudentLandingActivity.class);
+            intent.putExtra("userData", UtilHelper.getLoggedInStudent());
+            startActivity(intent);
+        } else if(!TextUtils.isEmpty(userType) && userType.equalsIgnoreCase("teacher")){
+            Intent intent = new Intent(mContext, TeacherLandingActivity.class);
+            intent.putExtra("teacherData",UtilHelper.getLoggedInTeahcer());
+            startActivity(intent);
+        }
         loginButton.setOnClickListener(this);
         signUp.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
@@ -69,7 +83,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.login_button:
-                String id = email.getText().toString();
+                UtilHelper.showWaitDialog(LoginActivity.this, "Checking Credentials", "please wait...");
+                String id = email.getText().toString().trim();
                 switch (selectedLoginType){
                     case "Student":
                         mRef = mDatabase.getReferenceFromUrl
@@ -102,9 +117,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                UtilHelper.dismissWaitDialog();
+                if(dataSnapshot.getValue() == null){
+                    return;
+                }
                 String pswrd = password.getText().toString();
                 if (accountType.equals("student")) {
                     StudentAccountBO studentData = dataSnapshot.getValue(StudentAccountBO.class);
+                    UtilHelper.createStudentLoginSession(LoginActivity.this, studentData);
+                    UtilHelper.setLoggedInUserType(LoginActivity.this, "student");
                     String temp = null;
                     if (studentData != null)
                         temp = studentData.getPassword();
@@ -116,6 +137,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Toast.makeText(mContext, "Username or password is incorrect!", Toast.LENGTH_LONG).show();
                 } else if(accountType.equals("teacher")){
                     TeacherAccountBO teacherData = dataSnapshot.getValue(TeacherAccountBO.class);
+                    UtilHelper.createTeacherLoginSession(LoginActivity.this, teacherData);
+                    UtilHelper.setLoggedInUserType(LoginActivity.this, "teacher");
                     String temp = null;
                     if (teacherData != null)
                         temp = teacherData.getPassword().toString();
