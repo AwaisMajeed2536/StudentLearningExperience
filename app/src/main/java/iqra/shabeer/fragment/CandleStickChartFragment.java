@@ -40,7 +40,6 @@ public class CandleStickChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_candle_stick_chart, container, false);
         initView(view);
-        UtilHelper.showWaitDialog(getActivity(), "Creating Chart", "please wait...");
         return view;
     }
 
@@ -59,27 +58,27 @@ public class CandleStickChartFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 scoreDataList = (ArrayList<ArrayList<Long>>) dataSnapshot.getValue();
+                int i=-1;
                 ArrayList<CandleEntry> entries = new ArrayList<>();
                 for (ArrayList<Long> singleQuestionScore : scoreDataList) {
                     Long[] array = new Long[singleQuestionScore.size()];
-                    entries.add(new CandleEntry(Collections.min(singleQuestionScore),
-                            Collections.max(singleQuestionScore), UtilHelper.findMedian(singleQuestionScore.toArray(array)),
+                    //entries.add(new CandleEntry(indexNo , max value in each ques, min value in each ques, Q1, Q3);
+                    entries.add(new CandleEntry(++i,Collections.max(singleQuestionScore),Collections.min(singleQuestionScore),
                             UtilHelper.findQ1(singleQuestionScore.toArray(array)), UtilHelper.findQ3(singleQuestionScore.toArray(array))));
                 }
-                CandleDataSet dataSet = new CandleDataSet(entries, "Students");
-                dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+
+                CandleDataSet dataSet = new CandleDataSet(entries, "Questions");
                 dataSet.setDrawIcons(false);
                 dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-                dataSet.setColor(Color.rgb(80,80,80));
+                dataSet.setColor(Color.rgb(80, 80, 80));
                 dataSet.setShadowColor(Color.DKGRAY);
                 dataSet.setShadowWidth(0.7f);
                 dataSet.setIncreasingColor(Color.RED);
-                dataSet.setIncreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
-                CandleData data = new CandleData(dataSet);
+                dataSet.setIncreasingPaintStyle(Paint.Style.STROKE);
+               CandleData data = new CandleData(dataSet);
                 candleStickChart.setData(data);
                 candleStickChart.animateY(5000);
                 candleStickChart.invalidate();
-                UtilHelper.dismissWaitDialog();
             }
 
             @Override
