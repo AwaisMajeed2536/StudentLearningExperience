@@ -146,6 +146,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
             byte[] byteArray = stream.toByteArray();
             addImage(document,byteArray);
             document.close();
+            UtilHelper.dismissWaitDialog();
             Toast.makeText(getActivity(), "PDF Created!", Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
@@ -351,7 +352,19 @@ public class QuantitativeAnalysisFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        UtilHelper.showWaitDialog(getActivity(), "Creating PDF", "please wait");
         createPDF();
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
 }

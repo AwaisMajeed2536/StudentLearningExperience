@@ -1,5 +1,7 @@
 package iqra.shabeer.fragment;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.CandleStickChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
@@ -37,6 +40,7 @@ public class CandleStickChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_candle_stick_chart, container, false);
         initView(view);
+        UtilHelper.showWaitDialog(getActivity(), "Creating Chart", "please wait...");
         return view;
     }
 
@@ -64,10 +68,18 @@ public class CandleStickChartFragment extends Fragment {
                 }
                 CandleDataSet dataSet = new CandleDataSet(entries, "Students");
                 dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+                dataSet.setDrawIcons(false);
+                dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+                dataSet.setColor(Color.rgb(80,80,80));
+                dataSet.setShadowColor(Color.DKGRAY);
+                dataSet.setShadowWidth(0.7f);
+                dataSet.setIncreasingColor(Color.RED);
+                dataSet.setIncreasingPaintStyle(Paint.Style.FILL_AND_STROKE);
                 CandleData data = new CandleData(dataSet);
                 candleStickChart.setData(data);
                 candleStickChart.animateY(5000);
                 candleStickChart.invalidate();
+                UtilHelper.dismissWaitDialog();
             }
 
             @Override
