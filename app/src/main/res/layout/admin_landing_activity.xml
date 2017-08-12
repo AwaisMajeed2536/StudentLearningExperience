@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    android:background="#CFD8DC"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00796B"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/admin_name_display"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="12dp"
+            android:padding="10dp"
+            android:text="Admin Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#FFFFFF"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/admin_designation_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="(Lecturer)"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#FFFFFF"
+            android:textStyle="italic"
+            android:layout_marginTop="7dp"
+            android:layout_below="@+id/admin_name_display"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="30"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/loginText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView"
+            android:layout_marginTop="29dp"
+            android:padding="10dp"
+            android:text="Select user for DB functions "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000000" />
+        <Button
+            android:id="@+id/data_teacher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/mybutton"
+            android:text="teacher"
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/data_student"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/mybutton"
+            android:text=" Student"
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/data_hod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/mybutton"
+            android:text="Hod"
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
+</LinearLayout>

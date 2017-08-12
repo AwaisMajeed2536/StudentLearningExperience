@@ -8,7 +8,7 @@ import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
 
 /**
- * Created by Devprovider on 4/11/2017.
+ * Created by Iqra on 4/11/2017.
  */
 
 public class ZoomableRelativeLayout extends RelativeLayout {

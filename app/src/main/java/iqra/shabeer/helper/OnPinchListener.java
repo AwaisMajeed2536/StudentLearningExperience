@@ -5,7 +5,7 @@ import android.view.ScaleGestureDetector;
 import iqra.shabeer.R;
 
 /**
- * Created by Devprovider on 4/11/2017.
+ * Created by Iqra on 4/11/2017.
  */
 
 class OnPinchListener extends ScaleGestureDetector.SimpleOnScaleGestureListener

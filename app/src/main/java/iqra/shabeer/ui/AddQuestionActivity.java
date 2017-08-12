@@ -18,7 +18,7 @@ import iqra.shabeer.R;
 import iqra.shabeer.utilities.Constants;
 
 /**
- * Created by Devprovider on 3/28/2017.
+ * Created by Iqra on 3/28/2017.
  */
 
 public class AddQuestionActivity extends AppCompatActivity implements View.OnClickListener {

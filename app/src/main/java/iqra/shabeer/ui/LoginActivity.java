@@ -1,5 +1,6 @@
 package iqra.shabeer.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,21 +24,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.bouncycastle.jce.provider.BrokenPBE;
-
 import iqra.shabeer.R;
 import iqra.shabeer.helper.UtilHelper;
+import iqra.shabeer.models.AdminAccountBO;
+import iqra.shabeer.models.HodAccountBO;
 import iqra.shabeer.models.StudentAccountBO;
 import iqra.shabeer.models.TeacherAccountBO;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+/**
+ * Created by Iqra on 2/21/2017.
+ */
+
+public class LoginActivity extends Activity implements View.OnClickListener {
 
     private Spinner loginType;
     private Context mContext;
     private String selectedLoginType;
     private EditText email,password;
     private Button loginButton;
-    private TextView signUp,forgotPassword;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
 
@@ -51,14 +55,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Intent intent = new Intent(mContext, StudentLandingActivity.class);
             intent.putExtra("userData", UtilHelper.getLoggedInStudent());
             startActivity(intent);
-        } else if(!TextUtils.isEmpty(userType) && userType.equalsIgnoreCase("teacher")){
+        }
+        else if(!TextUtils.isEmpty(userType) && userType.equalsIgnoreCase("teacher")){
             Intent intent = new Intent(mContext, TeacherLandingActivity.class);
             intent.putExtra("teacherData",UtilHelper.getLoggedInTeahcer());
             startActivity(intent);
         }
+        else if(!TextUtils.isEmpty(userType) && userType.equalsIgnoreCase("Admin")){
+            Intent intent = new Intent(mContext, AdminLandingActivity.class);
+            intent.putExtra("adminData",UtilHelper.getLoggedInAdmin());
+            startActivity(intent);
+        }
+        else if(!TextUtils.isEmpty(userType) && userType.equalsIgnoreCase("Hod")){
+            //Intent intent = new Intent(mContext, LoginActivity.class);
+          //  intent.putExtra("HodData",UtilHelper.getLoggedInHod());
+            //startActivity(intent);
+        }
         loginButton.setOnClickListener(this);
-        signUp.setOnClickListener(this);
-        forgotPassword.setOnClickListener(this);
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(mContext,
                 R.array.login_options,android.R.layout.simple_spinner_item);
@@ -81,35 +94,48 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.login_button:
-                UtilHelper.showWaitDialog(LoginActivity.this, "Checking Credentials", "please wait...");
+                UtilHelper.showWaitDialog(LoginActivity.this, "Checking Credentials");
                 String id = email.getText().toString().trim();
-                switch (selectedLoginType){
+                switch (selectedLoginType) {
                     case "Student":
                         mRef = mDatabase.getReferenceFromUrl
-                                ("https://student-evaluation-system.firebaseio.com/root/userAccounts/student/"+id);
-                        getData(mRef,"student");
+                                ("https://student-evaluation-system.firebaseio.com/root/userAccounts/student/" + id);
+                        getData(mRef, "student");
                         break;
                     case "Teacher":
                         mRef = mDatabase.getReferenceFromUrl
-                                ("https://student-evaluation-system.firebaseio.com/root/userAccounts/teacher/"+id);
-                        getData(mRef,"teacher");
+                                ("https://student-evaluation-system.firebaseio.com/root/userAccounts/teacher/" + id);
+                        getData(mRef, "teacher");
                         break;
                     case "HOD":
                         mRef = mDatabase.getReferenceFromUrl
-                                ("https://student-evaluation-system.firebaseio.com/root/userAccounts/hod/"+id);
-                        getData(mRef,"hod");
+                                ("https://student-evaluation-system.firebaseio.com/root/userAccounts/hod/" + id);
+                        getData(mRef, "hod");
                         break;
+                    case "Admin":
+                        String pass = password.getText().toString();
+                        String userN = "iqra";
+                        String pas = "1234";
+                        if (id.equals(userN) && pass.equals(pas)) {
+                            Toast.makeText(mContext, "logged inn!", Toast.LENGTH_SHORT).show();
+                            AdminAccountBO adminData = new AdminAccountBO();
+                            adminData.setFName(id);
+                            adminData.setPassword(pass);
+                            adminData.getDB_Admin();
+                            UtilHelper.createAdminLoginSession(LoginActivity.this, adminData);
+                            UtilHelper.setLoggedInUserType(LoginActivity.this, "Admin");
+                            UtilHelper.dismissWaitDialog();
+                            Intent intent = new Intent(mContext, AdminLandingActivity.class);
+                            intent.putExtra("adminData", adminData);
+                            startActivity(intent);
+                        } else{
+                            Toast.makeText(mContext, "Username or password is incorrect!", Toast.LENGTH_LONG).show();
+                           // UtilHelper.dismissWaitDialog();
+                        }
+
                 }
-                break;
-            case R.id.sign_up:
-                //Todo signup
-                break;
-            case R.id.forgot_password:
-                //todo forgot request
-                break;
-            default:
                 break;
         }
     }
@@ -127,27 +153,48 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     UtilHelper.createStudentLoginSession(LoginActivity.this, studentData);
                     UtilHelper.setLoggedInUserType(LoginActivity.this, "student");
                     String temp = null;
-                    if (studentData != null)
+                    if (studentData != null){
                         temp = studentData.getPassword();
                     if (temp.equals(pswrd)) {
                         Intent intent = new Intent(mContext, StudentLandingActivity.class);
                         intent.putExtra("userData", studentData);
                         startActivity(intent);
                     } else
-                        Toast.makeText(mContext, "Username or password is incorrect!", Toast.LENGTH_LONG).show();
-                } else if(accountType.equals("teacher")){
+                        Toast.makeText(mContext, "password is incorrect!", Toast.LENGTH_LONG).show();
+                }else
+                        Toast.makeText(mContext, "Username incorrect!", Toast.LENGTH_SHORT).show();
+                } else if(accountType.equals("teacher")) {
                     TeacherAccountBO teacherData = dataSnapshot.getValue(TeacherAccountBO.class);
                     UtilHelper.createTeacherLoginSession(LoginActivity.this, teacherData);
                     UtilHelper.setLoggedInUserType(LoginActivity.this, "teacher");
                     String temp = null;
                     if (teacherData != null)
                         temp = teacherData.getPassword().toString();
-                    if (!TextUtils.isEmpty(temp) && temp.equals(pswrd)){
+                    if (!TextUtils.isEmpty(temp) && temp.equals(pswrd)) {
                         Intent intent = new Intent(mContext, TeacherLandingActivity.class);
-                        intent.putExtra("teacherData",teacherData);
+                        intent.putExtra("teacherData", teacherData);
                         startActivity(intent);
-                    } else
-                        Toast.makeText(mContext, "Username or password is incorrect!",Toast.LENGTH_LONG).show();
+                    } else {
+                        UtilHelper.dismissWaitDialog();
+                        Toast.makeText(mContext, "Username or password is incorrect!", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else if(accountType.equals("hod")) {
+                    HodAccountBO hodData = dataSnapshot.getValue(HodAccountBO.class);
+                    UtilHelper.createHodLoginSession(LoginActivity.this, hodData);
+                    UtilHelper.setLoggedInUserType(LoginActivity.this, "Hod");
+                    String temp = null;
+                    if (hodData != null)
+                        temp = hodData.getPassword().toString();
+                    if (!TextUtils.isEmpty(temp) && temp.equals(pswrd)) {
+                       // Intent intent = new Intent(mContext, LoginActivity.class);
+                      //  intent.putExtra("HodData", hodData);
+                      //  startActivity(intent);
+                        Toast.makeText(mContext, "hod logged in", Toast.LENGTH_SHORT).show();
+                    } else {
+                        UtilHelper.dismissWaitDialog();
+                        Toast.makeText(mContext, "Username or password is incorrect!", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
 
@@ -164,8 +211,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         email = (EditText) findViewById(R.id.email_address);
         password = (EditText) findViewById(R.id.password);
         loginButton = (Button) findViewById(R.id.login_button);
-        signUp = (TextView) findViewById(R.id.sign_up);
-        forgotPassword = (TextView) findViewById(R.id.forgot_password);
         mDatabase = FirebaseDatabase.getInstance();
     }
 

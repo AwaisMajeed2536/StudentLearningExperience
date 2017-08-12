@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,7 +35,7 @@ import iqra.shabeer.models.EvaluationDataBO;
 import iqra.shabeer.utilities.Constants;
 
 /**
- * Created by Awais on 2/26/2017.
+ * Created by Iqra on 2/26/2017.
  */
 
 public class GenerateSurveyActivity extends AppCompatActivity {
@@ -44,6 +45,7 @@ public class GenerateSurveyActivity extends AppCompatActivity {
     private LinearLayout surveyQuestionLL;
     private LinearLayout surveyParentLL;
     private HashMap<String, List<String>> questionsList = new HashMap<String, List<String>>();
+    private String selectedCourse;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class GenerateSurveyActivity extends AppCompatActivity {
         setContentView(R.layout.generate_survey_activity);
         mContext = GenerateSurveyActivity.this;
         mDatabase = FirebaseDatabase.getInstance();
+        selectedCourse = getIntent().getStringExtra(TeacherLandingActivity.COURSE_PASS_KEY);
         mRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/surveyQuestions");
         surveyQuestionLL = (LinearLayout) findViewById(R.id.survey_questions_list_ll);
         surveyParentLL = (LinearLayout) findViewById(R.id.survey_parent_ll);
@@ -68,14 +71,12 @@ public class GenerateSurveyActivity extends AppCompatActivity {
         });
     }
 
-    private void generateView(final HashMap<String, List<String>> list){
-        List<String> quantitaveQuestion = new ArrayList<>();
-        quantitaveQuestion = list.get("quantitative");
+    private void generateView(final HashMap<String, List<String>> list) {
+        final List<String> quantitaveQuestion = list.get("quantitative");
         Constants.QNT_CHILD_COUNT = quantitaveQuestion.size();
-        List<String> qualitativeQestion = new ArrayList<>();
-        qualitativeQestion = list.get("qualitative");
+        final List<String> qualitativeQestion = list.get("qualitative");
         Constants.QLT_CHILD_COUNT = qualitativeQestion.size();
-        TextView quantitativeTv = new TextView(this);
+        final TextView quantitativeTv = new TextView(this);
         quantitativeTv.setText("Quantitative Questions");
         View hr1 = new View(this);
         ViewGroup.LayoutParams lp = new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -84,10 +85,10 @@ public class GenerateSurveyActivity extends AppCompatActivity {
         hr1.setLayoutParams(lp);
         surveyQuestionLL.addView(quantitativeTv);
         surveyQuestionLL.addView(hr1);
-        for (int i=0; i<quantitaveQuestion.size(); i++){
+        for (int i = 0; i < quantitaveQuestion.size(); i++) {
             CheckBox cb = new CheckBox(mContext);
             cb.setText(quantitaveQuestion.get(i));
-            cb.setId(0+i);
+            cb.setId(0 + i);
             surveyQuestionLL.addView(cb);
         }
         View hr2 = new View(this);
@@ -97,10 +98,10 @@ public class GenerateSurveyActivity extends AppCompatActivity {
         qualitativeTv.setText("Qualitative Questions");
         surveyQuestionLL.addView(qualitativeTv);
         surveyQuestionLL.addView(hr2);
-        for (int i=0; i<qualitativeQestion.size(); i++){
+        for (int i = 0; i < qualitativeQestion.size(); i++) {
             CheckBox cb = new CheckBox(mContext);
             cb.setText(qualitativeQestion.get(i));
-            cb.setId(128+i);
+            cb.setId(128 + i);
             surveyQuestionLL.addView(cb);
         }
 
@@ -111,47 +112,79 @@ public class GenerateSurveyActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<String> selectedQuestionList = new ArrayList<String>();
-                String selectedCourse = getIntent().getStringExtra(TeacherLandingActivity.COURSE_PASS_KEY);
-                for(int i=0; i<surveyQuestionLL.getChildCount(); i++){
-                    CheckBox cb = (CheckBox)surveyQuestionLL.findViewById(0+i);
-                    if(cb == null)
+                List<String> selectedQuantQuestionList = new ArrayList<>();
+                List<String> selectedQualtQuestionList = new ArrayList<>();
+                for (int i = 0; i < (quantitaveQuestion.size() + qualitativeQestion.size()); i++) {
+                    CheckBox cb = null;
+                    if (i < quantitaveQuestion.size())
+                        cb = (CheckBox) surveyQuestionLL.findViewById(0 + i);
+                    else
+                        cb = (CheckBox) surveyQuestionLL.findViewById(128 + (i - quantitaveQuestion.size()));
+                    if (cb == null)
                         continue;
-                    if (cb.isChecked())
-                        selectedQuestionList.add(cb.getText().toString());
+                    if (cb.isChecked()) {
+                        if (i < quantitaveQuestion.size())
+                            selectedQuantQuestionList.add(cb.getText().toString());
+                        else
+                            selectedQualtQuestionList.add(cb.getText().toString());
+                    }
                 }
-                EvaluationDataBO obj = new EvaluationDataBO(selectedCourse,"sdfs",selectedQuestionList);
-                DatabaseReference tempRef= mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations");
-                tempRef.child(selectedCourse.toLowerCase()).setValue(obj);
+                generateSurvery(selectedQuantQuestionList, selectedQualtQuestionList);
             }
         });
     }
 
-    private void setDateView(){
-        String [] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        NumberPicker eDay = (NumberPicker)findViewById(R.id.end_day);
+    private void generateSurvery(List<String> quantitaveQuestion, List<String> qualitativeQestion) {
+        DatabaseReference submitRef = FirebaseDatabase.getInstance()
+                .getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations/");
+        submitRef.child(selectedCourse.toLowerCase()).child("questions").child("qualitative").setValue(qualitativeQestion);
+        submitRef.child(selectedCourse.toLowerCase()).child("questions").child("quantitative").setValue(quantitaveQuestion);
+        initializeAnalysisData(quantitaveQuestion.size(), qualitativeQestion.size());
+        Toast.makeText(mContext, "Survey Generated", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    private void setDateView() {
+        String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        NumberPicker eDay = (NumberPicker) findViewById(R.id.end_day);
         eDay.setMinValue(1);
         eDay.setMaxValue(31);
-        NumberPicker eMonth = (NumberPicker)findViewById(R.id.end_month);
+        NumberPicker eMonth = (NumberPicker) findViewById(R.id.end_month);
         eMonth.setMinValue(0);
         eMonth.setMaxValue(11);
         eMonth.setDisplayedValues(monthNames);
-        NumberPicker eYear = (NumberPicker)findViewById(R.id.end_year);
+        NumberPicker eYear = (NumberPicker) findViewById(R.id.end_year);
         eYear.setMinValue(2017);
         eYear.setMaxValue(2020);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        new MenuInflater(this).inflate(R.menu.add_question_menu_button,menu);
+        new MenuInflater(this).inflate(R.menu.add_question_menu_button, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.add_question){
-            startActivity(new Intent(this,AddQuestionActivity.class));
+        if (item.getItemId() == R.id.add_question) {
+            startActivity(new Intent(this, AddQuestionActivity.class));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initializeAnalysisData(int quantCount, int qualtCount){
+        DatabaseReference quantiInitializer = mDatabase
+                .getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/quantitative/");
+        for (int i=0; i<quantCount; i++){
+            for(int j=0; j<5; j++) {
+                quantiInitializer.child(selectedCourse.toLowerCase()).child(String.valueOf(i)).child(String.valueOf(j))
+                        .setValue(0);
+            }
+        }
+        DatabaseReference qualtInitializer = mDatabase
+                .getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/qualitative/");
+        for(int i=0; i<qualtCount;i++){
+            qualtInitializer.child(selectedCourse.toLowerCase()).child(String.valueOf(i)).child("0").setValue("");
+        }
     }
 }

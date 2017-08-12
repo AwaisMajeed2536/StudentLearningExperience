@@ -10,6 +10,10 @@ import iqra.shabeer.R;
 import iqra.shabeer.adapter.AnalysisPagerAdapter;
 import iqra.shabeer.adapter.GraphPagerAdapter;
 
+/**
+ * Created by Iqra on 2/21/2017.
+ */
+
 public class ViewGraphActivity extends AppCompatActivity {
     private ViewPager fragmentHolder;
     private GraphPagerAdapter adapter;

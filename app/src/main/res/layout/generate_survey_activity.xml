@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:focusable="true"
+    android:background="#CFD8DC"
     android:focusableInTouchMode="true"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -15,6 +16,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#ffffff"
         android:textStyle="italic" />
+
 
     <ScrollView
         android:layout_width="match_parent"

@@ -9,7 +9,7 @@ import iqra.shabeer.fragment.QualitativeAnalysisFragment;
 import iqra.shabeer.fragment.QuantitativeAnalysisFragment;
 
 /**
- * Created by Devprovider on 20/04/2017.
+ * Created by Iqra on 20/04/2017.
  */
 
 public class AnalysisPagerAdapter extends FragmentPagerAdapter{

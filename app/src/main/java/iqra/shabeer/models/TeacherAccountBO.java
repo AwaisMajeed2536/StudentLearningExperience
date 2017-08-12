@@ -9,7 +9,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Awais on 2/26/2017.
+ * Created by Iqra on 2/26/2017.
  */
 
 public class TeacherAccountBO implements Parcelable {
@@ -37,7 +37,13 @@ public class TeacherAccountBO implements Parcelable {
         this.fName = null;
         this.password = null;
     }
-
+public TeacherAccountBO(String fName,String department, String designation,String password, List course){
+    this.courses = course;
+    this.department = department;
+    this.designation = designation;
+    this.fName = fName;
+    this.password = password;
+}
     protected TeacherAccountBO(Parcel in) {
         courses = in.createStringArrayList();
         department = in.readString();

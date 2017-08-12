@@ -3,7 +3,7 @@ package iqra.shabeer.models;
 import java.util.List;
 
 /**
- * Created by Devprovider on 20/04/2017.
+ * Created by Iqra on 20/04/2017.
  */
 
 public class QualitativeAnalysisModel {

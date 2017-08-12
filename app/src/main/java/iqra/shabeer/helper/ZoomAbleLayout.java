@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 /**
- * Created by Devprovider on 4/11/2017.
+ * Created by Iqra on 4/11/2017.
  */
 
 public class ZoomAbleLayout extends RelativeLayout implements ScaleGestureDetector.OnScaleGestureListener {

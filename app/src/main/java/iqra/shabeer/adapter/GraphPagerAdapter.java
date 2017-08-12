@@ -12,7 +12,7 @@ import iqra.shabeer.fragment.QuantitativeAnalysisFragment;
 import iqra.shabeer.fragment.ScoreGraphFragment;
 
 /**
- * Created by Devprovider on 20/04/2017.
+ * Created by Iqra on 20/04/2017.
  */
 
 public class GraphPagerAdapter extends FragmentPagerAdapter {

@@ -2,7 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <item
-    android:title="create pdf"
-    android:id="@+id/action_create_pdf"
-    app:showAsAction="never"></item>
+    android:title="Share Report"
+    android:id="@+id/action_share_report"
+    app:showAsAction="never"/>
+    <item
+        android:title="Save to phone"
+        android:id="@+id/save_report"
+        app:showAsAction="never"/>
 </menu>

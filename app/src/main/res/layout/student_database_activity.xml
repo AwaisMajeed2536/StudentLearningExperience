@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+        android:id="@+id/studentList"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <EditText
+        android:id="@+id/student_key"
+        android:singleLine="true"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="  student id"
+        android:layout_marginLeft="15dp"
+        android:textColor="#000000"/>
+    <EditText
+        android:id="@+id/studentid"
+        android:layout_width="250dp"
+        android:singleLine="true"
+        android:layout_height="wrap_content"
+        android:hint="  student Name"
+        android:layout_marginLeft="15dp"
+        android:textColor="#000000" />
+
+    <EditText
+        android:id="@+id/student_password"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="  password"
+        android:singleLine="true"
+        android:layout_marginLeft="15dp"
+        android:textColor="#000000"/>
+
+
+    <EditText
+        android:id="@+id/student_program"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="  program"
+        android:singleLine="true"
+        android:layout_marginLeft="15dp"
+        android:textColor="#000000"/>
+    <EditText
+        android:id="@+id/student_semester"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="  semester"
+        android:layout_marginLeft="15dp"
+        android:singleLine="true"
+        android:textColor="#000000"></EditText>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/load_data"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/teacher_department"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:background="#00796B"
+            android:padding="10dp"
+            android:text="load data"
+            android:textColor="#FFFFFF" />
+        <Button
+            android:id="@+id/add_data"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/teacher_department"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:background="#00796B"
+            android:padding="10dp"
+            android:text="add data"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/update_data"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:background="#00796B"
+            android:padding="10dp"
+            android:text="update data"
+            android:textColor="#FFFFFF" />
+        <Button
+            android:id="@+id/delete_data"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/teacher_department"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:background="#00796B"
+            android:padding="10dp"
+            android:text="delete data"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</LinearLayout>

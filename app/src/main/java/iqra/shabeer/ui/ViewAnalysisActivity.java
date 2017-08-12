@@ -11,7 +11,7 @@ import iqra.shabeer.adapter.AnalysisPagerAdapter;
 
 
 /**
- * Created by Devprovider on 4/5/2017.
+ * Created by Iqra on 4/5/2017.
  */
 
 public class ViewAnalysisActivity extends AppCompatActivity {

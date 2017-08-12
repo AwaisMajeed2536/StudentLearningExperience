@@ -4,12 +4,24 @@
     android:layout_height="match_parent"
     android:background="#CFD8DC"
     android:orientation="vertical">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Teacher Information"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:textColor="#FFFFFF"
+    android:textStyle="italic"
+    android:background="#00796B"
+    android:padding="15dp"
+    />
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_weight="20"
+        android:layout_width="300dp"
         android:layout_height="0dp"
-        android:background="#00796B">
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_weight="22.95"
+        android:background="#FF266059">
 
         <TextView
             android:id="@+id/teacher_name_display"
@@ -18,32 +30,36 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:padding="15dp"
+            android:padding="10dp"
             android:text="Teacher Name"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#FFFFFF"
             android:textStyle="italic" />
+
         <TextView
             android:id="@+id/teacher_designation_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/teacher_name_display"
+            android:padding="4dp"
             android:text="(Lecturer)"
-            android:padding="15dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#FFFFFF"
-            android:layout_alignParentRight="true"
-            android:textStyle="italic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textStyle="italic" />
+
         <TextView
             android:id="@+id/teacher_department_display"
-            android:text="(Computer Science)"
-            android:padding="15dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFFFFF"
-            android:layout_below="@+id/teacher_name_display"
-            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/teacher_designation_display"
+            android:layout_centerInParent="true"
+            android:padding="3dp"
+            android:text="(Computer Science)"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#FFFFFF" />
     </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/subject_radio_buttons_ll"
         android:orientation="vertical"
@@ -55,7 +71,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_weight="30"
+        android:layout_weight="35"
         android:orientation="vertical"
         android:layout_height="0dp">
         <Button
@@ -98,6 +114,5 @@
             android:layout_marginRight="10dp"
             />
     </LinearLayout>
-
 
 </LinearLayout>

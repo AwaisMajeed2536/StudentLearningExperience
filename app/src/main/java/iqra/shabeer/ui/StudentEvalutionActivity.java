@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,9 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import iqra.shabeer.R;
+import iqra.shabeer.helper.UtilHelper;
 
 /**
- * Created by Awais on 2/21/2017.
+ * Created by Iqra on 2/21/2017.
  */
 
 public class StudentEvalutionActivity extends AppCompatActivity {
@@ -39,7 +41,7 @@ public class StudentEvalutionActivity extends AppCompatActivity {
     private int numberOfQuantitativeQuestions;
     private String[] selectedOptionsArray;
     private String subjectName;
-    private ArrayList<long[]> previousValues;
+    private ArrayList<long[]> previousValues = new ArrayList<>();
     private DatabaseReference getQualitativeQueRef;
     private int numberOfQualitativeQuestions;
     private DatabaseReference submitQaultReportRef;
@@ -55,13 +57,46 @@ public class StudentEvalutionActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null)
             subjectName = bundle.getString("subjectName").trim();
+        UtilHelper.showWaitDialog(this, "Creating Evaluation");
         countQualtChildren();
         getQuantitativeQueRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations/"
-                + subjectName + "/quantitative/");
+                + subjectName + "/questions/quantitative");
         getQualitativeQueRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/evaluations/"
-                + subjectName + "/qualitative/");
+                + subjectName + "/questions/qualitative");
+        submitQauntReportRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/quantitative/"
+                + subjectName);
+        submitQaultReportRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/qualitative/"
+                + subjectName);
+        getPreviousData();
         addQuantitativeQuestionsToView();
 
+    }
+
+    private void getPreviousData() {
+        submitQauntReportRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UtilHelper.dismissWaitDialog();
+                ArrayList<ArrayList<Long>> subjectReport = (ArrayList<ArrayList<Long>>)
+                        dataSnapshot.getValue();
+                if (subjectReport == null || subjectReport.size() < 1)
+                    return;
+                previousValues = new ArrayList<long[]>();
+                for (int i = 0; i < subjectReport.size(); i++) {
+                    ArrayList<Long> questionReport = subjectReport.get(i);
+                    long[] counts = new long[5];
+                    for (int j = 0; j < questionReport.size(); j++) {
+                        counts[j] = questionReport.get(j);
+                    }
+                    previousValues.add(counts);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void addQuantitativeQuestionsToView(){
@@ -167,48 +202,16 @@ public class StudentEvalutionActivity extends AppCompatActivity {
                     RadioButton rb = (RadioButton) rg.findViewById(selectedOption);
                     selectedOptionsArray[i] = rb.getText().toString();
                 }
-                submitQauntReportRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/quantitative/"
-                        + subjectName);
-                submitQauntReportRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        ArrayList<ArrayList<Long>> subjectReport = (ArrayList<ArrayList<Long>>)
-                                dataSnapshot.getValue();
-                        if (subjectReport.isEmpty())
-                            return;
-                        previousValues = new ArrayList<long[]>();
-                        for (int i = 0; i < subjectReport.size(); i++) {
-                            ArrayList<Long> questionReport = subjectReport.get(i);
-                            long[] counts = new long[5];
-                            for (int j = 0; j < questionReport.size(); j++) {
-                                counts[j] = questionReport.get(j);
-                            }
-                            previousValues.add(counts);
-                        }
-                        submitReport(selectedOptionsArray, previousValues);
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                submitQaultReportRef = mDatabase.getReferenceFromUrl("https://student-evaluation-system.firebaseio.com/root/analysisData/qualitative/"
-                        + subjectName);
-
-                List<String> ansList = new ArrayList<String>();
-                for(int i=0; i<numberOfQualitativeQuestions; i++){
-                    submitQaultReportRef.child(String.valueOf(i)).child(String.valueOf(qualtChildCount))
-                            .setValue(((EditText)parentLinearLayout.findViewById(2912+i)).getText().toString());
-                }
+                submitQuantRerport(selectedOptionsArray);
+                submitQualtReport();
 
             }
         });
     }
 
-    private void submitReport(String[] selectedOptionsArray, ArrayList<long[]> previousValues) {
-        ArrayList<long[]> reportDataToBeSubmitted = addValuesToMakeReport(selectedOptionsArray, previousValues);
+    private void submitQuantRerport(String[] selectedOptionsArray) {
+        ArrayList<long[]> reportDataToBeSubmitted = addValuesToMakeReport(selectedOptionsArray);
         for (int i = 0; i < reportDataToBeSubmitted.size(); i++) {
             long[] ans = reportDataToBeSubmitted.get(i);
             for (int j = 0; j < 5; j++) {
@@ -217,10 +220,18 @@ public class StudentEvalutionActivity extends AppCompatActivity {
                 submitQauntReportRef.child(String.valueOf(i)).child(String.valueOf(j)).setValue(ans[j]);
             }
         }
+        Toast.makeText(mContext, "Evaluation Submitted", Toast.LENGTH_SHORT).show();
         finish();
     }
 
-    private ArrayList<long[]> addValuesToMakeReport(String[] selectedOptionsArray, ArrayList<long[]> previousValues) {
+    private void submitQualtReport(){
+        for(int i=0; i<numberOfQualitativeQuestions; i++){
+            submitQaultReportRef.child(String.valueOf(i)).child(String.valueOf(qualtChildCount))
+                    .setValue(((EditText)parentLinearLayout.findViewById(2912+i)).getText().toString());
+        }
+    }
+
+    private ArrayList<long[]> addValuesToMakeReport(String[] selectedOptionsArray) {
         ArrayList<long[]> output = new ArrayList<>();
         for (int i = 0; i < previousValues.size(); i++) {
             long[] previousCounts = previousValues.get(i);

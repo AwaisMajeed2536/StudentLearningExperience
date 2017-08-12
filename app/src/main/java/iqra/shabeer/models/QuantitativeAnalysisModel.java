@@ -1,7 +1,7 @@
 package iqra.shabeer.models;
 
 /**
- * Created by Devprovider on 4/11/2017.
+ * Created by Iqra on 4/11/2017.
  */
 
 public class QuantitativeAnalysisModel {
@@ -11,17 +11,21 @@ public class QuantitativeAnalysisModel {
     private double mean;
     private double median;
     private double stdDev;
+    private String kur;
+    private String skew;
 
     public QuantitativeAnalysisModel() {
     }
 
-    public QuantitativeAnalysisModel(String questionNumber, String question, int[] scoreCount, int[] score, double mean, double median, double stdDev) {
+    public QuantitativeAnalysisModel(String questionNumber, String question, int[] scoreCount, int[] score, double mean, double median, double stdDev, String kur,String skew) {
         this.questionNumber = questionNumber;
         this.question = question;
         this.scoreCount = scoreCount;
         this.mean = mean;
         this.median = median;
         this.stdDev = stdDev;
+        this.kur=kur;
+        this.skew=skew;
     }
 
     public String getQuestionNumber() {
@@ -31,6 +35,7 @@ public class QuantitativeAnalysisModel {
     public void setQuestionNumber(String questionNumber) {
         this.questionNumber = questionNumber;
     }
+
 
     public String getQuestion() {
         return question;
@@ -71,4 +76,21 @@ public class QuantitativeAnalysisModel {
     public void setStdDev(double stdDev) {
         this.stdDev = stdDev;
     }
+    public String getKur()
+    {
+        return kur;
+    }
+
+    public void setKur(String kur){
+        this.kur=kur;
+    }
+
+    public String getSkew(){
+        return skew;
+    }
+
+    public void setSkew(String skew){
+        this.skew=skew;
+    }
+
 }

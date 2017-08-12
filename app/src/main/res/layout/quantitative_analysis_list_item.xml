@@ -2,18 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="#e1e9ec"
     android:orientation="horizontal">
 
 
     <TextView
         android:id="@+id/question_number_textview"
-        android:layout_width="0dp"
+        android:layout_width="0.5dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
         android:layout_weight="8"
-        android:background="#ffffff"
-        android:text=" Q# " />
+        android:text="Q# " />
 
 
     <View
@@ -26,8 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="30"
-        android:background="#ffffff"
+        android:layout_weight="26.81"
         android:text=" Question " />
 
 
@@ -41,8 +39,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="5"
-        android:background="#ffffff"
+        android:layout_weight="6"
         android:text=" # " />
 
 
@@ -56,7 +53,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
         android:layout_weight="7"
-        android:background="#ffffff"
         android:text="SA A N DA SD" />
 
     <View
@@ -69,7 +65,7 @@
         android:id="@+id/score_progress_wrapper"
         android:layout_margin="1dp"
         android:layout_width="0dp"
-        android:layout_weight="20"
+        android:layout_weight="15"
         android:weightSum="5"
         android:layout_height="wrap_content">
 
@@ -78,7 +74,8 @@
             android:id="@+id/sa_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
-            android:progress="30"
+            android:progress="10"
+            android:max="20"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
@@ -86,7 +83,8 @@
             android:id="@+id/a_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
-            android:progress="30"
+            android:progress="10"
+            android:max="20"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
@@ -94,7 +92,8 @@
             android:id="@+id/n_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
-            android:progress="30"
+            android:progress="10"
+            android:max="20"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
@@ -102,7 +101,8 @@
             android:id="@+id/da_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
-            android:progress="30"
+            android:progress="10"
+            android:max="20"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
@@ -110,7 +110,8 @@
             android:id="@+id/sd_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
-            android:progress="30"
+            android:progress="10"
+            android:max="20"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
@@ -129,8 +130,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="11"
-        android:background="#ffffff"
+        android:layout_weight="10"
         android:text="Mean" />
 
 
@@ -144,8 +144,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="9"
-        android:background="#ffffff"
+        android:layout_weight="10"
         android:text="Med" />
 
 
@@ -160,13 +159,41 @@
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
         android:layout_weight="10"
-        android:background="#ffffff"
-        android:text="S.Dev" />
+        android:text="S.D" />
 
 
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:background="?android:attr/listDivider" />
+    <TextView
+        android:id="@+id/kurtosis_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:layout_margin="1dp"
+        android:layout_weight="10"
+        android:text="Krt" />
 
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/credit_hour_textview"
+        android:background="?android:attr/listDivider" />
+    <TextView
+        android:id="@+id/skewness_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:layout_margin="1dp"
+        android:layout_weight="10"
+        android:text="SK" />
+
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/credit_hour_textview"
+        android:background="?android:attr/listDivider" />
 </LinearLayout>

@@ -1,12 +1,14 @@
 package iqra.shabeer.fragment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -30,18 +32,17 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.PdfWriter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import iqra.shabeer.R;
 import iqra.shabeer.adapter.QuantitativeAnalysisAdapter;
@@ -51,7 +52,7 @@ import iqra.shabeer.models.QuantitativeAnalysisModel;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 /**
- * Created by Devprovider on 20/04/2017.
+ * Created by Iqra on 20/04/2017.
  */
 
 public class QuantitativeAnalysisFragment extends Fragment {
@@ -62,7 +63,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
     private List<QuantitativeAnalysisModel> dataList = new ArrayList<>();
     private ArrayList<ArrayList<Long>> scoreDataList;
     private ArrayList<String> questionsList = new ArrayList<>();
-
+    private String storedImagePath;
     private DatabaseReference scoreRef;
     private DatabaseReference questionRef;
 
@@ -71,7 +72,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UtilHelper.showWaitDialog(getActivity(), "Creating Report", "please wait...");
+        UtilHelper.showWaitDialog(getActivity(), "Creating Report");
         setHasOptionsMenu(true);
     }
 
@@ -90,7 +91,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
         scoreRef = FirebaseDatabase.getInstance().getReferenceFromUrl(
                 "https://student-evaluation-system.firebaseio.com/root/analysisData/quantitative/" + "dbd");
         questionRef = FirebaseDatabase.getInstance().getReferenceFromUrl(
-                "https://student-evaluation-system.firebaseio.com/root/surveyQuestions/quantitative");
+                "https://student-evaluation-system.firebaseio.com/root/evaluations/dbd/questions/quantitative");
         scoreRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -104,7 +105,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
                         analysisTableListview.setAdapter(adapter);
                         UtilHelper.dismissWaitDialog();
                         pdfImage = getWholeListViewItemsToBitmap();
-                        storeImage(pdfImage);
+                        storedImagePath = storeImage(pdfImage);
                     }
 
                     @Override
@@ -122,39 +123,6 @@ public class QuantitativeAnalysisFragment extends Fragment {
 
     }
 
-    private void createPDF() {
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            Toast.makeText(getActivity(), "Permission not Granted", Toast.LENGTH_SHORT).show();
-        }
-
-//Create a directory for your PDF
-        File pdfDir = new File(Environment.getExternalStorageDirectory(), "MyApp");
-        if (!pdfDir.exists()){
-            pdfDir.mkdir();
-        }
-
-        File pdfFile = new File(pdfDir, "myPdfFile.pdf");
-
-        try {
-            Document  document = new Document();
-
-            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
-            document.open();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            pdfImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-            addImage(document,byteArray);
-            document.close();
-            UtilHelper.dismissWaitDialog();
-            Toast.makeText(getActivity(), "PDF Created!", Toast.LENGTH_SHORT).show();
-        }
-        catch (Exception e){
-            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-    }
-
     private List<QuantitativeAnalysisModel> convertList() {
         List<QuantitativeAnalysisModel> returnList = new ArrayList<>();
         QuantitativeAnalysisModel model;
@@ -167,11 +135,14 @@ public class QuantitativeAnalysisFragment extends Fragment {
             model.setScoreCount(new int[]{scores.get(0).intValue(), scores.get(1).intValue(), scores.get(2).intValue(),
                     scores.get(3).intValue(), scores.get(4).intValue()});
             double mean = UtilHelper.findMean(scores);
+            double median = UtilHelper.findMedian(scores.toArray(convertArray));
+            double SD = UtilHelper.findStdDev(mean, scores);
             model.setMean(mean);
-            model.setMedian(UtilHelper.findMedian(scores.toArray(convertArray)));
-            model.setStdDev(UtilHelper.findStdDev(mean, scores));
+            model.setMedian(median);
+            model.setStdDev(SD);
+            model.setSkew(UtilHelper.findSkewness(mean, median, SD));
+            model.setKur(UtilHelper.findKurtosis(mean, SD, scores));
             returnList.add(model);
-
         }
         return returnList;
     }
@@ -197,6 +168,8 @@ public class QuantitativeAnalysisFragment extends Fragment {
             model.setMean(4.5);
             model.setMedian(5.3);
             model.setStdDev(0.6);
+            model.setKur("platyKur");
+            model.setSkew("+ve Sk");
             dataList.add(model);
         }
     }
@@ -292,7 +265,7 @@ public class QuantitativeAnalysisFragment extends Fragment {
             bigcanvas.drawBitmap(bmp, 0, iHeight, paint);
             iHeight += bmp.getHeight();
 
-            bmp.recycle();
+//            bmp.recycle();
             bmp = null;
         }
 
@@ -300,49 +273,66 @@ public class QuantitativeAnalysisFragment extends Fragment {
         return bigbitmap;
     }
 
-    private void storeImage(Bitmap image) {
-        File pictureFile = getOutputMediaFile();
-        if (pictureFile == null) {
-            Log.d(TAG,
-                    "Error creating media file, check storage permissions: ");// e.getMessage());
-            return;
-        }
+    private String storeImage(Bitmap pictureBitmap) {
+        String path = Environment.getExternalStorageDirectory().toString();
+        OutputStream fOut;
+        Bitmap fiek = getWholeListViewItemsToBitmap();
+        File file = new File(path, "result.jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+
         try {
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
-            fos.close();
-            Toast.makeText(getActivity(), "Image saved...", Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
+            fOut = new FileOutputStream(file);
+            pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+            fOut.flush(); // Not really required
+            fOut.close(); // do not forget to close the stream
+
+            return MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
         } catch (IOException e) {
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
+//    public boolean saveImageToInternalStorage(Bitmap image) {
+//
+//        try {
+//            // Use the compress method on the Bitmap object to write image to
+//            // the OutputStream
+//            FileOutputStream fos = openFileOutput("desiredFilename.png", Context.MODE_PRIVATE);
+//
+//            // Writing the bitmap to the output stream
+//            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//            fos.close();
+//
+//            return true;
+//        } catch (Exception e) {
+//            Log.e("saveToInternalStorage()", e.getMessage());
+//            return false;
+//        }
+//    }
 
-    private  File getOutputMediaFile(){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + getActivity().getPackageName()
-                + "/Files");
-
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                return null;
-            }
-        }
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-        File mediaFile;
-        String mImageName="MI_"+ timeStamp +".jpg";
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-        return mediaFile;
-    }
+//    private  File getOutputMediaFile(){
+//        // To be safe, you should check that the SDCard is mounted
+//        // using Environment.getExternalStorageState() before doing this.
+//        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+//                + "/Android/data/"
+//                + getActivity().getPackageName()
+//                + "/Files");
+//
+//        // This location works best if you want the created images to be shared
+//        // between applications and persist after your app has been uninstalled.
+//
+//        // Create the storage directory if it does not exist
+//        if (! mediaStorageDir.exists()){
+//            if (! mediaStorageDir.mkdirs()){
+//                return null;
+//            }
+//        }
+//        // Create a media file name
+//        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+//        File mediaFile;
+//        String mImageName="MI_"+ timeStamp +".jpg";
+//        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+//        return mediaFile;
+//    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -352,18 +342,61 @@ public class QuantitativeAnalysisFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        UtilHelper.showWaitDialog(getActivity(), "Creating PDF", "please wait");
-        createPDF();
+        switch (item.getItemId()) {
+            case R.id.action_share_report: {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.putExtra(Intent.EXTRA_EMAIL, new String[]{"imports.rsdo@gmail.com"});
+                Bitmap resultScreenShot = getWholeListViewItemsToBitmap();
+                Uri screenshotUri = Uri.parse(storedImagePath);
+                i.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+                i.setType("image/png");
+                try {
+                    startActivity(Intent.createChooser(i, "Send mail..."));
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(getActivity(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+            case R.id.save_report: {
+                SaveImage(pdfImage);
+                break;
+            }
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
+    private void SaveImage(Bitmap finalBitmap) {
+
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/saved_images");
+        myDir.mkdirs();
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        String fname = "Report" + n + ".jpg";
+        File file = new File(myDir, fname);
+
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+            Toast.makeText(getActivity(), "Image Saved", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Log.e(TAG, "SaveImage: ", e.getCause());
+            // Toast.makeText(this, "ERROR HAS OCCURED", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
-    public void onPause() {
+    public void onPause () {
         super.onPause();
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy () {
         super.onDestroy();
     }
 

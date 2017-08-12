@@ -24,7 +24,7 @@ import iqra.shabeer.R;
 import iqra.shabeer.models.StudentAccountBO;
 
 /**
- * Created by Awais on 2/21/2017.
+ * Created by Iqra on 2/21/2017.
  */
 
 public class StudentLandingActivity extends AppCompatActivity implements View.OnClickListener{

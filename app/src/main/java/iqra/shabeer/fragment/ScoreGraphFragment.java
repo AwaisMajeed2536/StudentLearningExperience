@@ -1,12 +1,17 @@
 package iqra.shabeer.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -27,9 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import iqra.shabeer.R;
-
 /**
- * Created by Devprovider on 21/04/2017.
+ * Created by Iqra on 21/04/2017.
  */
 
 public class ScoreGraphFragment extends Fragment {
@@ -43,6 +47,7 @@ public class ScoreGraphFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_score_graph, container, false);
+       setHasOptionsMenu(true);
         initView(rootView);
         return rootView;
     }
@@ -62,10 +67,11 @@ public class ScoreGraphFragment extends Fragment {
                 mChart.setData(barData);
 
                 mChart.getBarData().setBarWidth(0.1f);
-                mChart.getXAxis().setAxisMinimum(1.0f);
-                mChart.getXAxis().setAxisMaximum(dataList.size() + 1.0f);
+                mChart.getXAxis().setAxisMinimum(0.0f);
+                mChart.getXAxis().setAxisMaximum(dataList.size());
                 mChart.groupBars(0f, 0f, 0.1f);
                 mChart.invalidate();
+
             }
 
             @Override
@@ -83,11 +89,11 @@ public class ScoreGraphFragment extends Fragment {
         List<BarEntry> SD = new ArrayList<>();
         for (int i = 0; i < dataList.size(); i++) {
             ArrayList<Long> queData = dataList.get(i);
-            SD.add(new BarEntry(i, queData.get(0)));
-            DA.add(new BarEntry(i, queData.get(1)));
+            SA.add(new BarEntry(i, queData.get(0)));
+            A.add(new BarEntry(i, queData.get(1)));
             N.add(new BarEntry(i, queData.get(2)));
-            A.add(new BarEntry(i, queData.get(3)));
-            SA.add(new BarEntry(i, queData.get(4)));
+            DA.add(new BarEntry(i, queData.get(3)));
+            SD.add(new BarEntry(i, queData.get(4)));
         }
         BarDataSet saDataSet = new BarDataSet(SA, "SA");
         saDataSet.setColor(Color.rgb(0, 255, 0));
@@ -109,6 +115,7 @@ public class ScoreGraphFragment extends Fragment {
         mChart.setPinchZoom(false);
         mChart.setDrawBarShadow(false);
         mChart.setDrawGridBackground(false);
+        mChart.animateY(5000);
 
         Legend l = mChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -122,8 +129,7 @@ public class ScoreGraphFragment extends Fragment {
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setGranularity(1f);
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
+        xAxis.setCenterAxisLabels(true);xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 return String.valueOf((int) value);
@@ -132,4 +138,22 @@ public class ScoreGraphFragment extends Fragment {
 
         //mChart.getAxisRight().setEnabled(false);
     }
-}
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.save_graph, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mChart.saveToGallery("Score" + System.currentTimeMillis(), 50)) {
+            Toast.makeText(getActivity(), "Saving SUCCESSFUL!",
+                    Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getActivity(), "Saving FAILED!", Toast.LENGTH_SHORT)
+                    .show();
+        return super.onOptionsItemSelected(item);
+    }
+
+    }

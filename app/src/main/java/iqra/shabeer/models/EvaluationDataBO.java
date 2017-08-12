@@ -4,7 +4,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 /**
- * Created by Awais on 2/21/2017.
+ * Created by Iqra on 2/21/2017.
  */
 
 public class EvaluationDataBO {

@@ -18,7 +18,7 @@ import iqra.shabeer.R;
 import iqra.shabeer.models.QuantitativeAnalysisModel;
 
 /**
- * Created by Devprovider on 4/11/2017.
+ * Created by Iqra on 4/11/2017.
  */
 
 public class QuantitativeAnalysisAdapter extends BaseAdapter {
@@ -57,6 +57,8 @@ public class QuantitativeAnalysisAdapter extends BaseAdapter {
         TextView mean = (TextView) view.findViewById(R.id.mean_textview);
         TextView median = (TextView) view.findViewById(R.id.median_textview);
         TextView stdDev = (TextView) view.findViewById(R.id.std_dev_textview);
+        TextView kurtosis=(TextView) view.findViewById(R.id.kurtosis_textview);
+        TextView skewness=(TextView) view.findViewById(R.id.skewness_textview);
 
         ProgressBar sa = (ProgressBar) view.findViewById(R.id.sa_progressbar);
         ProgressBar a = (ProgressBar) view.findViewById(R.id.a_progressbar);
@@ -80,6 +82,8 @@ public class QuantitativeAnalysisAdapter extends BaseAdapter {
         mean.setText(String.format("%.2f",obj.getMean()));
         median.setText(String.format("%.2f",obj.getMedian()));
         stdDev.setText(String.format("%.2f",obj.getStdDev()));
+        kurtosis.setText(obj.getKur());
+        skewness.setText(obj.getSkew());
         return view;
     }
 

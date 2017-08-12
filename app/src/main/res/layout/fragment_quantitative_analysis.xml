@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/root_view"
+    android:background="#e1e9ec"
     android:orientation="vertical">
 
     <ListView
         android:id="@+id/quantitative_analysis_table_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"/>
+        android:background="#e1e9ec"/>
 
 </LinearLayout>

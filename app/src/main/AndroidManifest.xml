@@ -9,23 +9,30 @@
     <application
         android:name=".utilities.FirebasemContext"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/suvey_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.LoginActivity">
+        <activity android:name=".ui.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.LoginActivity"/>
+        <activity android:name=".ui.TeacherDatabaseActivity"/>
+        <activity android:name=".ui.StudentDatabaseActivity"/>
+        <activity android:name=".ui.HodDatabaseActivity"/>
         <activity android:name=".ui.StudentLandingActivity" />
+        <activity android:name=".ui.AdminLandingActivity"/>
         <activity android:name=".ui.StudentEvalutionActivity" />
         <activity android:name=".ui.TeacherLandingActivity" />
-        <activity android:name=".ui.GenerateSurveyActivity" />
+        <activity android:name=".ui.GenerateSurveyActivity"
+            android:theme="@style/Theme.AppCompat.Light"/>
         <activity android:name=".ui.AddQuestionActivity" />
-        <activity android:name=".ui.ViewAnalysisActivity"></activity>
+        <activity android:name=".ui.ViewAnalysisActivity"/>
+        <activity android:name=".ui.ViewGraphActivity"/>
 
 
         <!--
@@ -36,7 +43,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".ui.ViewGraphActivity"></activity>
     </application>
 
 </manifest>

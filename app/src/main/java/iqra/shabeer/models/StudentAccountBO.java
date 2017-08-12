@@ -1,7 +1,7 @@
 package iqra.shabeer.models;
 
 /**
- * Created by Awais on 2/22/2017.
+ * Created by Iqra on 2/22/2017.
  */
 
 

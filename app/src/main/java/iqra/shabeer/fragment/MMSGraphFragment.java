@@ -5,8 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -30,7 +35,7 @@ import iqra.shabeer.R;
 import iqra.shabeer.helper.UtilHelper;
 
 /**
- * Created by Devprovider on 02/05/2017.
+ * Created by Iqra on 02/05/2017.
  */
 
 public class MMSGraphFragment extends Fragment {
@@ -44,6 +49,8 @@ public class MMSGraphFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_score_graph, container, false);
         initView(rootView);
+        ((TextView) rootView.findViewById(R.id.axisInfo)).setText("X-axis shows no of questions Y-axis shows value");
+        setHasOptionsMenu(true);
         return rootView;
     }
 
@@ -62,10 +69,11 @@ public class MMSGraphFragment extends Fragment {
                 mChart.setData(barData);
 
                 mChart.getBarData().setBarWidth(0.1f);
-                mChart.getXAxis().setAxisMinimum(1.0f);
-                mChart.getXAxis().setAxisMaximum(dataList.size() + 1.0f);
+                mChart.getXAxis().setAxisMinimum(0.0f);
+                mChart.getXAxis().setAxisMaximum(dataList.size());
                 mChart.groupBars(0f, 0f, 0.235f);
                 mChart.invalidate();
+                mChart.animateY(5000);
             }
 
             @Override
@@ -81,9 +89,10 @@ public class MMSGraphFragment extends Fragment {
         List<BarEntry> stdDev = new ArrayList<>();
         for (int i = 0; i < dataList.size(); i++) {
             ArrayList<Long> queData = dataList.get(i);
+            Long[] convertArray = new Long[queData.size()];
             double meanValue = UtilHelper.findMean(queData);
             mean.add(new BarEntry(i, (float) meanValue));
-            med.add(new BarEntry(i, 2.3f));
+            med.add(new BarEntry(i, (float)UtilHelper.findMedian(queData.toArray(convertArray))));
             stdDev.add(new BarEntry(i, (float) UtilHelper.findStdDev(meanValue, queData)));
         }
         BarDataSet saDataSet = new BarDataSet(mean, "Mean");
@@ -99,10 +108,11 @@ public class MMSGraphFragment extends Fragment {
     private void initView(View view) {
         mChart = (BarChart) view.findViewById(R.id.analysis_bar_chart);
         mChart.getDescription().setEnabled(false);
-
+        mChart.animateY(5000);
         mChart.setPinchZoom(false);
         mChart.setDrawBarShadow(false);
         mChart.setDrawGridBackground(false);
+
 
         Legend l = mChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -124,4 +134,22 @@ public class MMSGraphFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.save_graph, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mChart.saveToGallery("MMSGraph" + System.currentTimeMillis(), 50)) {
+            Toast.makeText(getActivity(), "Saving SUCCESSFUL!",
+                    Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getActivity(), "Saving FAILED!", Toast.LENGTH_SHORT)
+                    .show();
+        return super.onOptionsItemSelected(item);
+    }
+
 }
