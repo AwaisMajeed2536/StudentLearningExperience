@@ -73,9 +73,9 @@ public class UtilHelper {
     }
     public static float findMedian(Long[] F) {
         int[] R = {1, 2, 3, 4, 5};
-        float[] cF = {F[0], F[0] + F[1], F[0] + F[1] + F[2], F[0] + F[1] + F[2] + F[3],
-                F[0] + F[1] + F[2] + F[3] + F[4]};
-        int Mn = (int) ((F[0] + F[1] + F[2] + F[3] + F[4]) / 2);
+        float[] cF = {F[4], F[4] + F[3], F[4] + F[3] + F[2], F[4] + F[3] + F[2] + F[1],
+                F[4] + F[3] + F[2] + F[1] + F[0]};
+        int Mn = (int) ((F[4] + F[3] + F[2] + F[1] + F[0]) / 2);
         int MF = findGreaterOrEqueal(F, Mn);
         double l = R[MF] - 0.5;
         float f = F[MF];
@@ -85,9 +85,9 @@ public class UtilHelper {
 
     public static float findQ1(Long[] F) {
         int[] R = {1, 2, 3, 4, 5};
-        float[] cF = {F[0], F[0] + F[1], F[0] + F[1] + F[2], F[0] + F[1] + F[2] + F[3],
-                F[0] + F[1] + F[2] + F[3] + F[4]};
-        int Mn = (int) ((F[0] + F[1] + F[2] + F[3] + F[4]) / 4);
+        float[] cF = {F[4], F[4] + F[3], F[4] + F[3] + F[2], F[4] + F[3] + F[2] + F[1],
+                F[4] + F[3] + F[2] + F[1] + F[0]};
+        int Mn = (int) ((F[4] + F[3] + F[2] + F[1] + F[0]) / 4);
         int MF = findGreaterOrEqueal(F, Mn);
         double l = R[MF] - 0.5;
         float f = F[MF];
@@ -97,9 +97,9 @@ public class UtilHelper {
 
     public static float findQ3(Long[] F) {
         int[] R = {1, 2, 3, 4, 5};
-        float[] cF = {F[0], F[0] + F[1], F[0] + F[1] + F[2], F[0] + F[1] + F[2] + F[3],
-                F[0] + F[1] + F[2] + F[3] + F[4]};
-        int Mn = (int) ((F[0] + F[1] + F[2] + F[3] + F[4]) / (3.0f / 4.0f));
+        float[] cF = {F[4], F[4] + F[3], F[4] + F[3] + F[2], F[4] + F[3] + F[2] + F[1],
+                F[4] + F[3] + F[2] + F[1] + F[0]};
+        int Mn = (int) ((F[4] + F[3] + F[2] + F[1] + F[0]) / (3.0f / 4.0f));
         int MF = findGreaterOrEqueal(F, Mn);
         double l = R[MF] - 0.5;
         float f = F[MF];

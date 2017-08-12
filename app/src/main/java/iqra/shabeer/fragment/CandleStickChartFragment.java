@@ -68,12 +68,12 @@ public class CandleStickChartFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 scoreDataList = (ArrayList<ArrayList<Long>>) dataSnapshot.getValue();
-                int i=-1;
+                int i=0;
                 ArrayList<CandleEntry> entries = new ArrayList<>();
                 for (ArrayList<Long> singleQuestionScore : scoreDataList) {
                     Long[] array = new Long[singleQuestionScore.size()];
                     //entries.add(new CandleEntry(indexNo , max value in each ques, min value in each ques, Q1, Q3);
-                    entries.add(new CandleEntry(++i,Collections.max(singleQuestionScore),Collections.min(singleQuestionScore),
+                    entries.add(new CandleEntry(i++,Collections.max(singleQuestionScore),Collections.min(singleQuestionScore),
                             UtilHelper.findQ1(singleQuestionScore.toArray(array)), UtilHelper.findQ3(singleQuestionScore.toArray(array))));
                 }
 
